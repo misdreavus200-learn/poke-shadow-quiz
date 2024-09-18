@@ -25,15 +25,11 @@ body {
 }
 
 .container {
-  text-align: center;
-  background-color: white;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
+  font-family: Arial, sans-serif;
 }
 
 h1 {
@@ -46,7 +42,7 @@ h1 {
 img {
   width: 200px;
   height: 200px;
-  filter: brightness(0); /* シルエット効果 */
+  /*filter: brightness(0);  シルエット効果 */
   margin-bottom: 20px;
 }
 
@@ -56,15 +52,6 @@ form {
   align-items: center;
 }
 
-input {
-  padding: 10px;
-  width: 80%;
-  margin-bottom: 20px;
-  border: 2px solid #3b4cca;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
 button {
   background-color: #3b4cca;
@@ -87,13 +74,86 @@ p {
 }
 
 .image-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin-bottom: 20px;
+}
+
+.message-container {
+  min-height: 40px; /* メッセージ表示領域の高さを確保 */
+  margin-bottom: 20px;
+}
+
+.input-container {
+  min-height: 50px; /* フォームが非表示でも高さを維持 */
+}
+
+.guess-form {
+  display: flex; /* フレックスボックスで横並びにする */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center; /* 垂直方向に中央揃え */
+  gap: 10px; /* インプットとボタンの間隔を調整 */
+  width: 100%; /* フォーム全体を広げる */
+  min-width: 300px;
+}
+
+input {
+  flex: 1; /* インプットが利用可能なスペースを占める */
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box; /* ボックスサイズをコンテナに収める */
+}
+
+.submit-button {
+  background-color: #77dd77;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap; /* ボタン内のテキストが折り返されないようにする */
+}
+
+.button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 50px; /* ボタンが非表示でも高さを維持 */
 }
 
 img {
   max-width: 100%;
   height: auto;
+}
+
+.silhouette {
+  filter: grayscale(1) brightness(0); /* 完全な黒のシルエットにする */
+  transition: filter 1s ease-in-out;
+}
+
+.revealed {
+  filter: none; /* シルエット解除 */
+}
+
+.next-question-button,
+.give-up-button {
+  background-color: #77dd77;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.give-up-button {
+  background-color: #ff6961;
+}
+
+.next-question-button:hover,
+.give-up-button:hover,
+.submit-button:hover {
+  opacity: 0.9;
 }
