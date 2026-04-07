@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# だれのシルエットかな？ 🎮
 
-## Getting Started
+ポケモンのシルエットを当てるクイズWebアプリです。
 
-First, run the development server:
+## 機能
+
+- 🌑 ポケモンのシルエット表示
+- 🔊 初回表示時&ボタンで鳴きごえ再生（PokéAPI Cries）
+- ✅ 日本語名で回答判定（ひらがな/カタカナ両対応）
+- 💡 3種類のヒント（タイプ / 初登場世代 / とくせい）
+- 🎉 正解時シルエット解除アニメーション
+- 🔄 つぎのポケモンボタンで連続プレイ
+
+## 技術スタック
+
+- **Next.js 15** (App Router)
+- **TypeScript**
+- **Tailwind CSS v4**
+- **PokéAPI** (https://pokeapi.co)
+
+## ローカル開発
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+http://localhost:3000 にアクセス。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Vercelへのデプロイ手順
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 方法1: Vercel CLI
 
-## Learn More
+```bash
+npm i -g vercel
+vercel
+```
 
-To learn more about Next.js, take a look at the following resources:
+### 方法2: GitHub経由（推奨）
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. このプロジェクトをGitHubにpushする
+2. https://vercel.com にアクセス
+3. 「New Project」→ GitHubリポジトリを選択
+4. そのまま「Deploy」をクリック（設定不要）
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## PokéAPI について
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- ポケモンデータ: `https://pokeapi.co/api/v2/pokemon/{id}`
+- 種族データ（日本語名）: `https://pokeapi.co/api/v2/pokemon-species/{id}`
+- 鳴きごえ: `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/{id}.ogg`
