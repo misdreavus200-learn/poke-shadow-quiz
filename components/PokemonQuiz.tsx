@@ -164,8 +164,8 @@ export default function PokemonQuiz() {
 
   // ── hint display entries ──
   const hintEntries = [
-    { key: "type" as const,       label: "タイプ",    value: pokemon?.types.join(" / "),     open: hints.type },
     { key: "generation" as const, label: "初登場世代", value: pokemon?.generation,            open: hints.generation },
+    { key: "type" as const,       label: "タイプ",    value: pokemon?.types.join(" / "),     open: hints.type },
     { key: "ability" as const,    label: "とくせい",   value: pokemon?.abilities.join(" / "), open: hints.ability },
   ];
 
