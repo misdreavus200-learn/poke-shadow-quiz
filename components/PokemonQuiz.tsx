@@ -66,7 +66,6 @@ export default function PokemonQuiz() {
 
     try {
       const id = Math.floor(Math.random() * 1010) + 1;
-
       const [pokeRes, speciesRes] = await Promise.all([
         fetch(`https://pokeapi.co/api/v2/pokemon/${id}`),
         fetch(`https://pokeapi.co/api/v2/pokemon-species/${id}`),
@@ -137,7 +136,11 @@ export default function PokemonQuiz() {
       setMessage("ちがう！ もう一度かんがえてみよう！");
       setMsgType("wrong");
       setShaking(true);
-      setTimeout(() => setShaking(false), 450);
+      setTimeout(() => {
+        setShaking(false);
+        setMessage("");
+        setMsgType("");
+      }, 1200);
       inputRef.current?.focus();
     }
   };
@@ -159,12 +162,17 @@ export default function PokemonQuiz() {
     if (e.key === "Enter") handleAnswer();
   };
 
+  // ── hint display entries ──
+  const hintEntries = [
+    { key: "type" as const,       label: "タイプ",    value: pokemon?.types.join(" / "),     open: hints.type },
+    { key: "generation" as const, label: "初登場世代", value: pokemon?.generation,            open: hints.generation },
+    { key: "ability" as const,    label: "とくせい",   value: pokemon?.abilities.join(" / "), open: hints.ability },
+  ];
+
   if (loading) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "20px" }}>
-        <p style={{ fontFamily: "var(--font-jp), sans-serif", fontWeight: 900, fontSize: "18px", color: "var(--ink-soft)" }}>
-          よみこみ中…
-        </p>
+        <p style={{ fontFamily: "var(--font-jp), sans-serif", fontWeight: 900, fontSize: "18px", color: "var(--ink-soft)" }}>よみこみ中…</p>
         <div style={{ display: "flex", gap: "10px" }}>
           {[0,1,2].map(i => (
             <div key={i} className="load-dot" style={{ width: 14, height: 14, borderRadius: "50%", background: "var(--red)", border: "2px solid var(--ink)" }} />
@@ -177,9 +185,7 @@ export default function PokemonQuiz() {
   if (fetchError || !pokemon) {
     return (
       <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "20px", padding: "24px" }}>
-        <p style={{ fontFamily: "var(--font-jp), sans-serif", fontWeight: 700, fontSize: "16px", color: "var(--red)", textAlign: "center" }}>
-          データの読み込みに失敗しました。
-        </p>
+        <p style={{ fontFamily: "var(--font-jp), sans-serif", fontWeight: 700, fontSize: "16px", color: "var(--red)", textAlign: "center" }}>データの読み込みに失敗しました。</p>
         <button className="btn btn-answer" onClick={fetchPokemon}>もう一度あそぶ</button>
       </div>
     );
@@ -187,8 +193,6 @@ export default function PokemonQuiz() {
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "16px", position: "relative", zIndex: 1 }}>
-
-      {/* Decorative pokéballs */}
       <div className="deco-ball" style={{ width: 320, height: 320, bottom: -100, right: -80 }} />
       <div className="deco-ball" style={{ width: 180, height: 180, top: -50, left: -60 }} />
 
@@ -205,84 +209,70 @@ export default function PokemonQuiz() {
             WebkitTextStroke: "3px var(--ink)",
             textShadow: "3px 3px 0 var(--yellow), 5px 5px 0 var(--ink)",
             lineHeight: 1.2,
-          }}>
-            だ〜れだ？
-          </h1>
+          }}>だ〜れだ？</h1>
         </div>
 
-        {/* ── Main card: image left, cry button right ── */}
+        {/* ── Main card ── */}
         <div className="anime-card card-main" style={{ padding: "14px 18px", display: "flex", alignItems: "center", gap: "14px", position: "relative" }}>
           {showFlash && (
             <div className="reveal-flash" style={{ position: "absolute", inset: 0, background: "white", zIndex: 20, borderRadius: "inherit" }} />
           )}
-
           <div style={{ position: "relative", width: 150, height: 150, flexShrink: 0 }}>
             {pokemon.imageUrl ? (
               <Image
                 src={pokemon.imageUrl}
                 alt={revealed ? pokemon.japaneseName : "シルエット"}
-                width={150}
-                height={150}
+                width={150} height={150}
                 className={`pokemon-silhouette${revealed ? " revealed" : ""}`}
                 style={{ objectFit: "contain", width: "100%", height: "100%" }}
-                draggable={false}
-                priority
+                draggable={false} priority
               />
             ) : (
               <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "3rem" }}>?</div>
             )}
           </div>
-
           <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <button className="btn btn-ghost" onClick={playCry} title="なきごえをもう一度きく"
-              style={{ width: "100%", textAlign: "center" }}>
+            <button className="btn btn-ghost" onClick={playCry} style={{ width: "100%", textAlign: "center" }}>
               🔊 なきごえ
             </button>
           </div>
         </div>
 
-        {/* ── Hint card: chips in a row, expand on click ── */}
-        <div className="anime-card" style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: "8px" }}>
-          <p className="section-label">ヒント</p>
-          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        {/* ── Hint card (fixed height) ── */}
+        <div className="anime-card" style={{ padding: "12px 14px" }}>
+          <p className="section-label" style={{ marginBottom: "8px" }}>ヒント</p>
 
-            {hints.type ? (
-              <div className="hint-chip-open" style={{ flex: "1 1 100%" }}>
-                <span className="hint-label">タイプ</span>
-                {pokemon.types.join("　/　")}
-              </div>
-            ) : (
-              <button className="hint-chip-closed" onClick={() => openHint("type")} disabled={answered}>
-                💡 タイプ
+          {/* Chip row — always 3 chips, fixed */}
+          <div style={{ display: "flex", gap: "8px" }}>
+            {hintEntries.map(({ key, label, open }) => (
+              <button
+                key={key}
+                className={`hint-chip-closed${open ? " hint-chip-active" : ""}`}
+                onClick={() => openHint(key)}
+                disabled={open || answered}
+                style={{ flex: 1, textAlign: "center" }}
+              >
+                {open ? "✓ " : "💡 "}{label}
               </button>
-            )}
+            ))}
+          </div>
 
-            {hints.generation ? (
-              <div className="hint-chip-open" style={{ flex: "1 1 100%" }}>
-                <span className="hint-label">初登場世代</span>
-                {pokemon.generation}
+          {/* Revealed content area — always render all 3 rows so height never changes */}
+          <div style={{ marginTop: "8px", display: "flex", flexDirection: "column", gap: "4px" }}>
+            {hintEntries.map(({ key, label, value, open }) => (
+              <div
+                key={key}
+                className="hint-chip-open"
+                style={{ display: "flex", alignItems: "baseline", gap: "8px", visibility: open ? "visible" : "hidden" }}
+              >
+                <span className="hint-label" style={{ flexShrink: 0 }}>{label}</span>
+                <span>{open ? value : "　"}</span>
               </div>
-            ) : (
-              <button className="hint-chip-closed" onClick={() => openHint("generation")} disabled={answered}>
-                💡 世代
-              </button>
-            )}
-
-            {hints.ability ? (
-              <div className="hint-chip-open" style={{ flex: "1 1 100%" }}>
-                <span className="hint-label">とくせい</span>
-                {pokemon.abilities.join("　/　")}
-              </div>
-            ) : (
-              <button className="hint-chip-closed" onClick={() => openHint("ability")} disabled={answered}>
-                💡 とくせい
-              </button>
-            )}
-
+            ))}
           </div>
         </div>
 
-        {/* ── Answer card ── */}
+        {/* ── Answer card (fixed height — buttons swap to result) ── */}
         <div className={`anime-card${shaking ? " shake" : ""}`} style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "10px" }}>
           <input
             ref={inputRef}
@@ -296,38 +286,40 @@ export default function PokemonQuiz() {
             autoComplete="off"
             autoCapitalize="none"
           />
-          <div style={{ display: "flex", gap: "10px" }}>
-            <button
-              className="btn btn-answer"
-              style={{ flex: 1 }}
-              onClick={handleAnswer}
-              disabled={answered || !answer.trim()}
-            >
-              こたえる！
-            </button>
-            <button
-              className="btn btn-giveup"
-              onClick={handleGiveUp}
-              disabled={answered}
-            >
-              ギブアップ
-            </button>
-          </div>
+
+          {/* Action area: always the same height */}
+          {!answered ? (
+            /* Before answer: こたえる + ギブアップ */
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button className="btn btn-answer" style={{ flex: 1 }} onClick={handleAnswer} disabled={!answer.trim()}>
+                こたえる！
+              </button>
+              <button className="btn btn-giveup" onClick={handleGiveUp}>
+                ギブアップ
+              </button>
+            </div>
+          ) : (
+            /* After answer: message + next button side by side */
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }} className="pop-in">
+              <div
+                className={`msg-box ${msgType === "correct" ? "msg-correct" : "msg-giveup"}`}
+                style={{ flex: 1, padding: "8px 12px", fontSize: "13px", margin: 0 }}
+              >
+                {message}
+              </div>
+              <button className="btn btn-next" style={{ width: "auto", padding: "10px 14px", fontSize: "13px", animation: "none", flexShrink: 0 }} onClick={fetchPokemon}>
+                つぎへ ▶
+              </button>
+            </div>
+          )}
+
+          {/* Wrong message — inline, auto-disappears */}
+          {msgType === "wrong" && message && (
+            <div className="msg-box msg-wrong pop-in" style={{ padding: "6px 12px", fontSize: "13px" }}>
+              {message}
+            </div>
+          )}
         </div>
-
-        {/* ── Message ── */}
-        {message && (
-          <div className={`msg-box pop-in ${msgType === "correct" ? "msg-correct" : msgType === "wrong" ? "msg-wrong" : "msg-giveup"}`}>
-            {message}
-          </div>
-        )}
-
-        {/* ── Next button ── */}
-        {answered && (
-          <button className="btn btn-next pop-in" onClick={fetchPokemon}>
-            つぎのポケモン　▶
-          </button>
-        )}
 
       </div>
     </div>

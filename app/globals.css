@@ -394,3 +394,13 @@ body {
   box-shadow: 2px 2px 0 var(--yellow-dark);
   line-height: 1.5;
 }
+
+/* ── hint chip active state (opened) ── */
+.hint-chip-closed.hint-chip-active {
+  background: var(--yellow-light);
+  border-color: var(--yellow-dark);
+  color: var(--ink);
+  opacity: 1;
+  cursor: default;
+  box-shadow: 1px 1px 0 var(--ink);
+}
